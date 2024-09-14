@@ -1,21 +1,23 @@
-// app/api/graphql/route.ts
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { client } from "@/lib/apollo-client";
 
-export async function POST(request: Request) {
-	const { query, variables } = await request.json();
-
+export async function POST(request: NextRequest) {
 	try {
-		const { data } = await client.query({
-			query,
-			variables,
-		});
+		const { query, variables } = await request.json();
+		console.log("Received GraphQL query:", query);
+		console.log("Variables:", variables);
 
-		return NextResponse.json(data);
+		const response = await client.query({ query, variables });
+		console.log("GraphQL response:", JSON.stringify(response, null, 2));
+
+		return NextResponse.json(response.data);
 	} catch (error: any) {
-		console.error("Error fetching repositories:", error.message);
+		console.error("GraphQL API error:", error);
+		if (error.networkError && error.networkError.result) {
+			console.error("Network error details:", error.networkError.result);
+		}
 		return NextResponse.json(
-			{ error: "An error occurred while fetching repositories" },
+			{ error: "Internal Server Error" },
 			{ status: 500 }
 		);
 	}

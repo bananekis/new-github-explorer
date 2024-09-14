@@ -9,17 +9,28 @@ export async function fetchRepositories(query: string) {
 
 	const url = `${baseUrl}/api/graphql`;
 
+	console.log("Fetching from URL:", url);
+	console.log("Query:", query);
+
 	try {
 		const res = await fetch(url, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
+				// Log the authorization header (but mask the actual token)
+				Authorization: `Bearer ${process.env.GITHUB_ACCESS_TOKEN?.substring(
+					0,
+					5
+				)}...`,
 			},
 			body: JSON.stringify({
 				query: SEARCH_REPOSITORIES,
 				variables: { query: `${query} sort:stars-desc`, first: 10 },
 			}),
 		});
+
+		console.log("Response status:", res.status);
+		console.log("Response headers:", Object.fromEntries(res.headers));
 
 		if (!res.ok) {
 			const errorText = await res.text();

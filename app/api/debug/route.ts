@@ -1,10 +1,24 @@
 import { NextResponse } from "next/server";
+import { client } from "@/lib/apollo-client";
+import { gql } from "@apollo/client";
+
+const TEST_QUERY = gql`
+	query {
+		viewer {
+			login
+		}
+	}
+`;
 
 export async function GET() {
-	return NextResponse.json({
-		NEXT_PUBLIC_VERCEL_URL: process.env.NEXT_PUBLIC_VERCEL_URL,
-		NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
-		VERCEL_URL: process.env.VERCEL_URL,
-		NODE_ENV: process.env.NODE_ENV,
-	});
+	try {
+		const response = await client.query({ query: TEST_QUERY });
+		return NextResponse.json(response.data);
+	} catch (error) {
+		console.error("Test GitHub API error:", error);
+		return NextResponse.json(
+			{ error: "GitHub API Test Failed" },
+			{ status: 500 }
+		);
+	}
 }
