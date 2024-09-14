@@ -3,10 +3,10 @@
 import { SEARCH_REPOSITORIES } from "./github-api";
 
 export async function fetchRepositories(query: string) {
-	const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+	const baseUrl = process.env.VERCEL_URL
+		? `https://${process.env.VERCEL_URL}`
+		: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 	const url = `${baseUrl}/api/graphql`;
-
-	console.log("url", url);
 
 	const searchQuery = `${query} sort:stars-desc`;
 
