@@ -1,11 +1,12 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { SEARCH_REPOSITORIES } from "./github-api";
 
 export async function fetchRepositories(query: string) {
 	const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 	const url = `${baseUrl}/api/graphql`;
+
+	console.log("url", url);
 
 	const searchQuery = `${query} sort:stars-desc`;
 
