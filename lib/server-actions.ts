@@ -2,20 +2,38 @@
 
 import { SEARCH_REPOSITORIES } from "./github-api";
 import { client } from "./apollo-client";
+import { ApolloQueryResult } from "@apollo/client";
+import { SearchRepositoriesData } from "@/app/types";
 
-export async function fetchRepositories(query: string) {
-	console.log("Fetching repositories for query:", query);
+export async function fetchRepositories(
+	query: string
+): Promise<ApolloQueryResult<SearchRepositoriesData>> {
+	const fetchWithRevalidate = (url: string, init?: RequestInit) => {
+		return fetch(url, {
+			...init,
+			next: { revalidate: 3600 },
+		});
+	};
 
 	try {
-		const { data } = await client.query({
+		const result = await client.query<SearchRepositoriesData>({
 			query: SEARCH_REPOSITORIES,
 			variables: { query: `${query} sort:stars-desc`, first: 10 },
+			context: {
+				fetchOptions: {
+					fetch: fetchWithRevalidate,
+				},
+			},
+			fetchPolicy: "network-only",
 		});
 
-		console.log("Fetched data:", JSON.stringify(data, null, 2));
-		return data;
-	} catch (error: any) {
+		return result;
+	} catch (error) {
 		console.error("Error fetching repositories:", error);
-		throw new Error(`Failed to fetch repositories: ${error.message}`);
+		throw new Error(
+			`Failed to fetch repositories: ${
+				error instanceof Error ? error.message : String(error)
+			}`
+		);
 	}
 }

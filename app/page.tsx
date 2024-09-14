@@ -1,7 +1,7 @@
 // app/page.tsx
 import { Suspense } from "react";
-import { revalidatePath } from "next/cache";
 import SearchForm from "./components/SearchForm";
+import RepoListSkeleton from "./components/RepoListSkeleton";
 import RepoList from "./components/RepoList";
 
 export default function Home({
@@ -21,18 +21,5 @@ export default function Home({
 				<RepoList query={query} />
 			</Suspense>
 		</main>
-	);
-}
-
-function RepoListSkeleton() {
-	return (
-		<div className="space-y-4 mt-8">
-			{[...Array(5)].map((_, i) => (
-				<div
-					key={i}
-					className="h-32 bg-gray-200 rounded-md animate-pulse"
-				></div>
-			))}
-		</div>
 	);
 }

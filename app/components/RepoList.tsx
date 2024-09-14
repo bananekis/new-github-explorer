@@ -12,7 +12,7 @@ export default async function RepoList({ query }: { query: string }) {
 	}
 
 	try {
-		const data = await fetchRepositories(query);
+		const { data } = await fetchRepositories(query);
 		const repos = data.search.edges;
 
 		if (repos.length === 0) {

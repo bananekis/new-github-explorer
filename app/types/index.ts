@@ -14,3 +14,29 @@ export interface RepoCardProps {
 		} | null;
 	};
 }
+
+export interface Repository {
+	id: string;
+	name: string;
+	description: string | null;
+	url: string;
+	stargazerCount: number;
+	forkCount: number;
+	primaryLanguage: {
+		name: string;
+		color: string;
+	} | null;
+	owner: {
+		login: string;
+		avatarUrl: string;
+	};
+}
+
+export interface SearchRepositoriesData {
+	search: {
+		repositoryCount: number;
+		edges: Array<{
+			node: Repository;
+		}>;
+	};
+}
